@@ -41,13 +41,31 @@
     margin-bottom: 6px;
     margin-top: 16px;
   }
-  input {
+  label .optional-tag {
+    font-weight: 400;
+    color: #999;
+    font-size: 12px;
+  }
+  input[type="text"] {
     width: 100%;
     box-sizing: border-box;
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 10px 12px;
     font-size: 14px;
+  }
+  .color-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  input[type="color"] {
+    width: 44px;
+    height: 40px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 2px;
+    cursor: pointer;
   }
   button {
     margin-top: 20px;
@@ -120,14 +138,20 @@
   <input type="text" id="bizName" placeholder="e.g. Marda Loop Barber Shop">
 
   <label for="googleLink">Google review link</label>
-  <input type="text" id="googleLink" placeholder="e.g. https://g.page/r/abc123/review">
+  <input type="text" id="googleLink" placeholder="e.g. https://search.google.com/local/writereview?placeid=...">
 
   <label for="ownerEmail">Owner's email</label>
   <input type="text" id="ownerEmail" placeholder="e.g. owner@business.com">
 
+  <label for="brandColor">Brand color <span class="optional-tag">(optional)</span></label>
+  <div class="color-row">
+    <input type="color" id="brandColorPicker" value="#f5b301">
+    <input type="text" id="brandColor" placeholder="Leave blank for default gold">
+  </div>
+
   <button id="generateBtn">Generate link</button>
 
-  <div class="error-msg" id="errorMsg">Please fill in all three fields.</div>
+  <div class="error-msg" id="errorMsg">Please fill in the business name, review link, and email.</div>
 
   <div class="result" id="result">
     <div class="result-label">Their custom review card link:</div>
@@ -139,10 +163,18 @@
 <script>
   const BASE_URL = "https://mrcrogo.github.io/review-cards/";
 
+  const colorPicker = document.getElementById('brandColorPicker');
+  const colorText = document.getElementById('brandColor');
+
+  colorPicker.addEventListener('input', () => {
+    colorText.value = colorPicker.value.replace('#', '');
+  });
+
   document.getElementById('generateBtn').addEventListener('click', () => {
     const biz = document.getElementById('bizName').value.trim();
     const link = document.getElementById('googleLink').value.trim();
     const email = document.getElementById('ownerEmail').value.trim();
+    const color = document.getElementById('brandColor').value.trim().replace('#', '');
 
     const errorMsg = document.getElementById('errorMsg');
     const result = document.getElementById('result');
@@ -155,10 +187,14 @@
 
     errorMsg.classList.remove('visible');
 
-    const finalUrl = BASE_URL +
+    let finalUrl = BASE_URL +
       "?biz=" + encodeURIComponent(biz) +
       "&link=" + encodeURIComponent(link) +
       "&email=" + encodeURIComponent(email);
+
+    if (color) {
+      finalUrl += "&color=" + encodeURIComponent(color);
+    }
 
     document.getElementById('resultLink').textContent = finalUrl;
     result.classList.add('visible');
