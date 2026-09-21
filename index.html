@@ -14,7 +14,7 @@
   }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: linear-gradient(135deg, #fff9ec 0%, #fef3e0 50%, #fdeee0 100%);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, #fff9ec) 0%, color-mix(in srgb, var(--accent) 6%, #fef3e0) 50%, #fdeee0 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -97,6 +97,10 @@
     line-height: 1;
   }
   .star:hover, .star.hovered {
+    color: var(--accent);
+    transform: scale(1.15);
+  }
+  .star.selected {
     color: var(--accent);
     transform: scale(1.15);
   }
@@ -226,6 +230,7 @@
   }
 
   document.getElementById('bizName').textContent = 'How was your experience at ' + decodeURIComponent(bizNameParam) + '?';
+  document.title = decodeURIComponent(bizNameParam) + ' - Rate your experience';
 
   const stars = document.querySelectorAll('.star');
   const feedbackBox = document.getElementById('feedbackBox');
@@ -254,17 +259,27 @@
   }
 
   function handleRating(val) {
+    stars.forEach(s => {
+      if (parseInt(s.getAttribute('data-value')) <= val) {
+        s.classList.add('selected');
+      }
+    });
+
     if (val >= 4) {
       if (googleLink) {
-        window.location.href = decodeURIComponent(googleLink);
+        setTimeout(() => {
+          window.location.href = decodeURIComponent(googleLink);
+        }, 450);
       } else {
         document.getElementById('card').innerHTML = '<p class="error">No review link was set up for this business. Please contact the owner.</p>';
       }
     } else {
-      starsContainer.style.display = 'none';
-      document.querySelector('.subtitle').style.display = 'none';
-      document.querySelector('.icon-badge').style.display = 'none';
-      feedbackBox.classList.add('visible');
+      setTimeout(() => {
+        starsContainer.style.display = 'none';
+        document.querySelector('.subtitle').style.display = 'none';
+        document.querySelector('.icon-badge').style.display = 'none';
+        feedbackBox.classList.add('visible');
+      }, 300);
     }
   }
 
