@@ -48,10 +48,29 @@
     font-size: 28px;
     overflow: hidden;
   }
+  .icon-badge.has-logo {
+    background: white;
+    border: 1.5px solid #eee;
+    border-radius: 14px;
+    width: auto;
+    min-width: 64px;
+    max-width: 220px;
+    height: 64px;
+    padding: 8px 14px;
+  }
+  .icon-badge.has-logo img {
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    padding: 0;
+  }
   .icon-badge img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    padding: 6px;
+    box-sizing: border-box;
   }
   h1 {
     font-size: 22px;
@@ -161,7 +180,7 @@
 <body>
 
 <div class="card" id="card">
-  <div class="icon-badge" id="iconBadge">STAR</div>
+  <div class="icon-badge" id="iconBadge">⭐</div>
   <h1 id="bizName">How was your experience?</h1>
   <p class="subtitle">Tap a star to let us know</p>
 
@@ -174,31 +193,33 @@
   </div>
 
   <div class="feedback-box" id="feedbackBox">
-    <p>We are sorry to hear that. Please tell us what went wrong so we can make it right:</p>
+    <p>We're sorry to hear that. Please tell us what went wrong so we can make it right:</p>
     <textarea id="feedbackText" placeholder="Your feedback..."></textarea>
     <button id="submitFeedback">Send feedback</button>
   </div>
 
   <div class="thank-you" id="thankYou">
+    <span class="check">💌</span>
     Thank you, your feedback has been sent directly to the business.
   </div>
 </div>
 
 <script>
-  var params = new URLSearchParams(window.location.search);
-  var bizNameParam = params.get('biz') || 'us';
-  var googleLink = params.get('link');
-  var contactEmail = params.get('email');
-  var customColor = params.get('color');
-  var logoUrl = params.get('logo');
+  const params = new URLSearchParams(window.location.search);
+  const bizNameParam = params.get('biz') || 'us';
+  const googleLink = params.get('link');
+  const contactEmail = params.get('email');
+  const customColor = params.get('color');
+  const logoUrl = params.get('logo');
 
   if (logoUrl) {
-    var iconBadge = document.getElementById('iconBadge');
+    const iconBadge = document.getElementById('iconBadge');
+    iconBadge.classList.add('has-logo');
     iconBadge.innerHTML = '<img src="' + decodeURIComponent(logoUrl) + '" alt="Logo">';
   }
 
   if (customColor) {
-    var safeColor = '#' + customColor.replace(/[^0-9a-fA-F]/g, '').slice(0, 6);
+    const safeColor = '#' + customColor.replace(/[^0-9a-fA-F]/g, '').slice(0, 6);
     if (safeColor.length === 7) {
       document.documentElement.style.setProperty('--accent', safeColor);
       document.documentElement.style.setProperty('--accent-dark', safeColor);
@@ -207,24 +228,24 @@
 
   document.getElementById('bizName').textContent = 'How was your experience at ' + decodeURIComponent(bizNameParam) + '?';
 
-  var stars = document.querySelectorAll('.star');
-  var feedbackBox = document.getElementById('feedbackBox');
-  var thankYou = document.getElementById('thankYou');
-  var starsContainer = document.getElementById('stars');
+  const stars = document.querySelectorAll('.star');
+  const feedbackBox = document.getElementById('feedbackBox');
+  const thankYou = document.getElementById('thankYou');
+  const starsContainer = document.getElementById('stars');
 
-  stars.forEach(function(star) {
-    star.addEventListener('mouseenter', function() {
-      var val = star.getAttribute('data-value');
+  stars.forEach(star => {
+    star.addEventListener('mouseenter', () => {
+      const val = star.getAttribute('data-value');
       highlightStars(val);
     });
-    star.addEventListener('click', function() {
-      var val = parseInt(star.getAttribute('data-value'));
+    star.addEventListener('click', () => {
+      const val = parseInt(star.getAttribute('data-value'));
       handleRating(val);
     });
   });
 
   function highlightStars(upTo) {
-    stars.forEach(function(s) {
+    stars.forEach(s => {
       if (parseInt(s.getAttribute('data-value')) <= upTo) {
         s.classList.add('hovered');
       } else {
@@ -248,15 +269,15 @@
     }
   }
 
-  document.getElementById('submitFeedback').addEventListener('click', function() {
-    var text = document.getElementById('feedbackText').value.trim();
+  document.getElementById('submitFeedback').addEventListener('click', () => {
+    const text = document.getElementById('feedbackText').value.trim();
     if (!text) {
       alert('Please enter some feedback before sending.');
       return;
     }
     if (contactEmail) {
-      var subject = encodeURIComponent('Customer feedback for ' + decodeURIComponent(bizNameParam));
-      var body = encodeURIComponent(text);
+      const subject = encodeURIComponent('Customer feedback for ' + decodeURIComponent(bizNameParam));
+      const body = encodeURIComponent(text);
       window.location.href = 'mailto:' + decodeURIComponent(contactEmail) + '?subject=' + subject + '&body=' + body;
     }
     feedbackBox.classList.remove('visible');
