@@ -152,6 +152,9 @@
   <label for="logoUrl">Logo image URL <span class="optional-tag">(optional)</span></label>
   <input type="text" id="logoUrl" placeholder="e.g. https://mrcrogo.github.io/review-cards/logos/lily.png">
 
+  <label for="bizPhone">Business phone number <span class="optional-tag">(optional, adds a "Call us now" button)</span></label>
+  <input type="text" id="bizPhone" placeholder="e.g. 4035551234">
+
   <button id="generateBtn">Generate link</button>
 
   <div class="error-msg" id="errorMsg">Please fill in the business name, review link, and email.</div>
@@ -179,6 +182,7 @@
     const email = document.getElementById('ownerEmail').value.trim();
     const color = document.getElementById('brandColor').value.trim().replace('#', '');
     const logo = document.getElementById('logoUrl').value.trim();
+    const phone = document.getElementById('bizPhone').value.trim();
 
     const errorMsg = document.getElementById('errorMsg');
     const result = document.getElementById('result');
@@ -202,6 +206,10 @@
 
     if (logo) {
       finalUrl += "&logo=" + encodeURIComponent(logo);
+    }
+
+    if (phone) {
+      finalUrl += "&phone=" + encodeURIComponent(phone);
     }
 
     document.getElementById('resultLink').textContent = finalUrl;
