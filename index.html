@@ -205,6 +205,18 @@
   .middle-box button {
     margin-top: 10px;
   }
+  .start-over {
+    display: block;
+    text-align: center;
+    margin-top: 16px;
+    font-size: 13px;
+    color: #999;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .start-over:hover {
+    color: #666;
+  }
   .error {
     color: #c0392b;
     font-size: 14px;
@@ -231,6 +243,7 @@
     <p>Glad it was a good visit! Would you like to share it publicly, or tell us privately how we could improve?</p>
     <button id="middleGoogleBtn">Leave a Google review</button>
     <button class="secondary" id="middleFeedbackBtn">Send private feedback instead</button>
+    <span class="start-over" onclick="window.location.reload()">Selected the wrong rating? Tap here to start over</span>
   </div>
 
   <div class="feedback-box" id="feedbackBox">
@@ -240,6 +253,7 @@
     </div>
     <textarea id="feedbackText" placeholder="Your feedback..."></textarea>
     <button id="submitFeedback">Send feedback</button>
+    <span class="start-over" onclick="window.location.reload()">Selected the wrong rating? Tap here to start over</span>
   </div>
 
   <div class="thank-you" id="thankYou">
