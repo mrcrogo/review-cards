@@ -8,13 +8,14 @@
   :root {
     --accent: #f5b301;
     --accent-dark: #d99a00;
+    --bg-tint: #f5b301;
   }
   * {
     box-sizing: border-box;
   }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, #fff9ec) 0%, color-mix(in srgb, var(--accent) 6%, #fef3e0) 50%, #fdeee0 100%);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--bg-tint) 12%, #fff9ec) 0%, color-mix(in srgb, var(--bg-tint) 6%, #fef3e0) 50%, #fdeee0 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -224,8 +225,7 @@
   if (customColor) {
     const safeColor = '#' + customColor.replace(/[^0-9a-fA-F]/g, '').slice(0, 6);
     if (safeColor.length === 7) {
-      document.documentElement.style.setProperty('--accent', safeColor);
-      document.documentElement.style.setProperty('--accent-dark', safeColor);
+      document.documentElement.style.setProperty('--bg-tint', safeColor);
     }
   }
 
