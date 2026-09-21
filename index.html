@@ -37,6 +37,17 @@
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
   }
+  .cover-photo {
+    display: none;
+    width: calc(100% + 64px);
+    height: 160px;
+    object-fit: cover;
+    margin: -44px -32px 24px -32px;
+    border-radius: 20px 20px 0 0;
+  }
+  .cover-photo.visible {
+    display: block;
+  }
   .icon-badge {
     width: 56px;
     height: 56px;
@@ -237,6 +248,7 @@
 <body>
 
 <div class="card" id="card">
+  <img class="cover-photo" id="coverPhoto" alt="">
   <div class="icon-badge" id="iconBadge">⭐</div>
   <h1 id="bizName">How was your experience?</h1>
   <p class="subtitle">Tap a star to let us know</p>
@@ -285,8 +297,14 @@
   const customColor = params.get('color');
   const logoUrl = params.get('logo');
   const phoneNumber = params.get('phone');
+  const coverPhotoUrl = params.get('photo');
 
-  if (logoUrl) {
+  if (coverPhotoUrl) {
+    const coverPhoto = document.getElementById('coverPhoto');
+    coverPhoto.src = decodeURIComponent(coverPhotoUrl);
+    coverPhoto.classList.add('visible');
+    document.getElementById('iconBadge').style.display = 'none';
+  } else if (logoUrl) {
     const iconBadge = document.getElementById('iconBadge');
     iconBadge.classList.add('has-logo');
     iconBadge.innerHTML = '<img src="' + decodeURIComponent(logoUrl) + '" alt="Logo">';
