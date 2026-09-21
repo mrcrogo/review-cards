@@ -143,7 +143,7 @@
   <label for="ownerEmail">Owner's email</label>
   <input type="text" id="ownerEmail" placeholder="e.g. owner@business.com">
 
-  <label for="brandColor">Brand color <span class="optional-tag">(optional)</span></label>
+  <label for="brandColor">Page background color <span class="optional-tag">(optional, stars stay gold)</span></label>
   <div class="color-row">
     <input type="color" id="brandColorPicker" value="#f5b301">
     <input type="text" id="brandColor" placeholder="Leave blank for default gold">
@@ -164,24 +164,24 @@
 </div>
 
 <script>
-  var BASE_URL = "https://mrcrogo.github.io/review-cards/";
+  const BASE_URL = "https://mrcrogo.github.io/review-cards/";
 
-  var colorPicker = document.getElementById('brandColorPicker');
-  var colorText = document.getElementById('brandColor');
+  const colorPicker = document.getElementById('brandColorPicker');
+  const colorText = document.getElementById('brandColor');
 
-  colorPicker.addEventListener('input', function() {
+  colorPicker.addEventListener('input', () => {
     colorText.value = colorPicker.value.replace('#', '');
   });
 
-  document.getElementById('generateBtn').addEventListener('click', function() {
-    var biz = document.getElementById('bizName').value.trim();
-    var link = document.getElementById('googleLink').value.trim();
-    var email = document.getElementById('ownerEmail').value.trim();
-    var color = document.getElementById('brandColor').value.trim().replace('#', '');
-    var logo = document.getElementById('logoUrl').value.trim();
+  document.getElementById('generateBtn').addEventListener('click', () => {
+    const biz = document.getElementById('bizName').value.trim();
+    const link = document.getElementById('googleLink').value.trim();
+    const email = document.getElementById('ownerEmail').value.trim();
+    const color = document.getElementById('brandColor').value.trim().replace('#', '');
+    const logo = document.getElementById('logoUrl').value.trim();
 
-    var errorMsg = document.getElementById('errorMsg');
-    var result = document.getElementById('result');
+    const errorMsg = document.getElementById('errorMsg');
+    const result = document.getElementById('result');
 
     if (!biz || !link || !email) {
       errorMsg.classList.add('visible');
@@ -191,7 +191,7 @@
 
     errorMsg.classList.remove('visible');
 
-    var finalUrl = BASE_URL +
+    let finalUrl = BASE_URL +
       "?biz=" + encodeURIComponent(biz) +
       "&link=" + encodeURIComponent(link) +
       "&email=" + encodeURIComponent(email);
@@ -208,13 +208,13 @@
     result.classList.add('visible');
   });
 
-  document.getElementById('copyBtn').addEventListener('click', function() {
-    var text = document.getElementById('resultLink').textContent;
-    navigator.clipboard.writeText(text).then(function() {
-      var btn = document.getElementById('copyBtn');
-      var originalText = btn.textContent;
+  document.getElementById('copyBtn').addEventListener('click', () => {
+    const text = document.getElementById('resultLink').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copyBtn');
+      const originalText = btn.textContent;
       btn.textContent = "Copied!";
-      setTimeout(function() { btn.textContent = originalText; }, 1500);
+      setTimeout(() => { btn.textContent = originalText; }, 1500);
     });
   });
 </script>
