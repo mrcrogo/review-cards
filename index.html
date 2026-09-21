@@ -205,6 +205,16 @@
   .middle-box button {
     margin-top: 10px;
   }
+  .redirect-msg {
+    display: none;
+    margin-top: 24px;
+    font-size: 14px;
+    color: #888;
+    animation: fadeIn 0.3s ease-out;
+  }
+  .redirect-msg.visible {
+    display: block;
+  }
   .start-over {
     display: block;
     text-align: center;
@@ -237,6 +247,11 @@
     <span class="star" data-value="3">&#9733;</span>
     <span class="star" data-value="4">&#9733;</span>
     <span class="star" data-value="5">&#9733;</span>
+  </div>
+
+  <div class="redirect-msg" id="redirectMsg">
+    Taking you to Google...
+    <span class="start-over" id="cancelRedirect" onclick="cancelRedirectAndReload()">Selected the wrong rating? Tap here to cancel</span>
   </div>
 
   <div class="middle-box" id="middleBox">
@@ -342,6 +357,13 @@
     feedbackBox.classList.add('visible');
   }
 
+  let redirectTimer = null;
+
+  function cancelRedirectAndReload() {
+    if (redirectTimer) clearTimeout(redirectTimer);
+    window.location.reload();
+  }
+
   function handleRating(val) {
     stars.forEach(s => {
       if (parseInt(s.getAttribute('data-value')) <= val) {
@@ -350,7 +372,11 @@
     });
 
     if (val >= 4) {
-      setTimeout(goToGoogle, 450);
+      setTimeout(() => {
+        document.querySelector('.subtitle').style.display = 'none';
+        document.getElementById('redirectMsg').classList.add('visible');
+      }, 300);
+      redirectTimer = setTimeout(goToGoogle, 1800);
     } else if (val === 3) {
       setTimeout(() => {
         hideIntro();
