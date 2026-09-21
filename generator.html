@@ -155,3 +155,69 @@
   <button id="generateBtn">Generate link</button>
 
   <div class="error-msg" id="errorMsg">Please fill in the business name, review link, and email.</div>
+
+  <div class="result" id="result">
+    <div class="result-label">Their custom review card link:</div>
+    <div class="result-link" id="resultLink"></div>
+    <button class="copy-btn" id="copyBtn">Copy link</button>
+  </div>
+</div>
+
+<script>
+  var BASE_URL = "https://mrcrogo.github.io/review-cards/";
+
+  var colorPicker = document.getElementById('brandColorPicker');
+  var colorText = document.getElementById('brandColor');
+
+  colorPicker.addEventListener('input', function() {
+    colorText.value = colorPicker.value.replace('#', '');
+  });
+
+  document.getElementById('generateBtn').addEventListener('click', function() {
+    var biz = document.getElementById('bizName').value.trim();
+    var link = document.getElementById('googleLink').value.trim();
+    var email = document.getElementById('ownerEmail').value.trim();
+    var color = document.getElementById('brandColor').value.trim().replace('#', '');
+    var logo = document.getElementById('logoUrl').value.trim();
+
+    var errorMsg = document.getElementById('errorMsg');
+    var result = document.getElementById('result');
+
+    if (!biz || !link || !email) {
+      errorMsg.classList.add('visible');
+      result.classList.remove('visible');
+      return;
+    }
+
+    errorMsg.classList.remove('visible');
+
+    var finalUrl = BASE_URL +
+      "?biz=" + encodeURIComponent(biz) +
+      "&link=" + encodeURIComponent(link) +
+      "&email=" + encodeURIComponent(email);
+
+    if (color) {
+      finalUrl += "&color=" + encodeURIComponent(color);
+    }
+
+    if (logo) {
+      finalUrl += "&logo=" + encodeURIComponent(logo);
+    }
+
+    document.getElementById('resultLink').textContent = finalUrl;
+    result.classList.add('visible');
+  });
+
+  document.getElementById('copyBtn').addEventListener('click', function() {
+    var text = document.getElementById('resultLink').textContent;
+    navigator.clipboard.writeText(text).then(function() {
+      var btn = document.getElementById('copyBtn');
+      var originalText = btn.textContent;
+      btn.textContent = "Copied!";
+      setTimeout(function() { btn.textContent = originalText; }, 1500);
+    });
+  });
+</script>
+
+</body>
+</html>
