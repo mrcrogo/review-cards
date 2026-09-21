@@ -149,6 +149,9 @@
     <input type="text" id="brandColor" placeholder="Leave blank for default gold">
   </div>
 
+  <label for="logoUrl">Logo image URL <span class="optional-tag">(optional)</span></label>
+  <input type="text" id="logoUrl" placeholder="e.g. https://mrcrogo.github.io/review-cards/logos/lily.png">
+
   <button id="generateBtn">Generate link</button>
 
   <div class="error-msg" id="errorMsg">Please fill in the business name, review link, and email.</div>
@@ -175,6 +178,7 @@
     const link = document.getElementById('googleLink').value.trim();
     const email = document.getElementById('ownerEmail').value.trim();
     const color = document.getElementById('brandColor').value.trim().replace('#', '');
+    const logo = document.getElementById('logoUrl').value.trim();
 
     const errorMsg = document.getElementById('errorMsg');
     const result = document.getElementById('result');
@@ -194,6 +198,10 @@
 
     if (color) {
       finalUrl += "&color=" + encodeURIComponent(color);
+    }
+
+    if (logo) {
+      finalUrl += "&logo=" + encodeURIComponent(logo);
     }
 
     document.getElementById('resultLink').textContent = finalUrl;
