@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rate your experience</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+  }
+  .card {
+    background: white;
+    border-radius: 16px;
+    padding: 40px 30px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+  h1 {
+    font-size: 22px;
+    margin-bottom: 10px;
+    color: #1a1a1a;
+  }
+  p.subtitle {
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 15px;
+  }
+  .stars {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .star {
+    font-size: 40px;
+    cursor: pointer;
+    color: #ddd;
+    transition: color 0.15s, transform 0.1s;
+    user-select: none;
+  }
+  .star:hover, .star.hovered {
+    color: #f5b301;
+    transform: scale(1.1);
+  }
+  .feedback-box {
+    display: none;
+    margin-top: 20px;
+    text-align: left;
+  }
+  .feedback-box.visible {
+    display: block;
+  }
+  textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 14px;
+    min-height: 100px;
+    font-family: inherit;
+    resize: vertical;
+  }
+  button {
+    margin-top: 12px;
+    width: 100%;
+    background: #1a1a1a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #333;
+  }
+  .thank-you {
+    display: none;
+    margin-top: 20px;
+    color: #444;
+    font-size: 15px;
+  }
+  .thank-you.visible {
+    display: block;
+  }
+  .error {
+    color: #c0392b;
+    font-size: 14px;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="card" id="card">
+  <h1 id="bizName">How was your experience?</h1>
+  <p class="subtitle">Tap a star to let us know</p>
+
+  <div class="stars" id="stars">
+    <span class="star" data-value="1">&#9733;</span>
+    <span class="star" data-value="2">&#9733;</span>
+    <span class="star" data-value="3">&#9733;</span>
+    <span class="star" data-value="4">&#9733;</span>
+    <span class="star" data-value="5">&#9733;</span>
+  </div>
+
+  <div class="feedback-box" id="feedbackBox">
+    <p style="font-size:14px; color:#666; margin-bottom:10px;">
+      We're sorry to hear that. Please tell us what went wrong so we can make it right:
+    </p>
+    <textarea id="feedbackText" placeholder="Your feedback..."></textarea>
+    <button id="submitFeedback">Send feedback</button>
+  </div>
+
+  <div class="thank-you" id="thankYou">
+    Thank you, your feedback has been sent directly to the business.
+  </div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const bizNameParam = params.get('biz') || 'us';
+  const googleLink = params.get('link');
+  const contactEmail = params.get('email');
+
+  document.getElementById('bizName').textContent = 'How was your experience at ' + decodeURIComponent(bizNameParam) + '?';
+
+  const stars = document.querySelectorAll('.star');
+  const feedbackBox = document.getElementById('feedbackBox');
+  const thankYou = document.getElementById('thankYou');
+  const starsContainer = document.getElementById('stars');
+
+  stars.forEach(star => {
+    star.addEventListener('mouseenter', () => {
+      const val = star.getAttribute('data-value');
+      highlightStars(val);
+    });
+    star.addEventListener('click', () => {
+      const val = parseInt(star.getAttribute('data-value'));
+      handleRating(val);
+    });
+  });
+
+  function highlightStars(upTo) {
+    stars.forEach(s => {
+      if (parseInt(s.getAttribute('data-value')) <= upTo) {
+        s.classList.add('hovered');
+      } else {
+        s.classList.remove('hovered');
+      }
+    });
+  }
+
+  function handleRating(val) {
+    if (val >= 4) {
+      if (googleLink) {
+        window.location.href = decodeURIComponent(googleLink);
+      } else {
+        document.getElementById('card').innerHTML = '<p class="error">No review link was set up for this business. Please contact the owner.</p>';
+      }
+    } else {
+      starsContainer.style.display = 'none';
+      document.querySelector('.subtitle').style.display = 'none';
+      feedbackBox.classList.add('visible');
+    }
+  }
+
+  document.getElementById('submitFeedback').addEventListener('click', () => {
+    const text = document.getElementById('feedbackText').value.trim();
+    if (!text) {
+      alert('Please enter some feedback before sending.');
+      return;
+    }
+    if (contactEmail) {
+      const subject = encodeURIComponent('Customer feedback for ' + decodeURIComponent(bizNameParam));
+      const body = encodeURIComponent(text);
+      window.location.href = 'mailto:' + decodeURIComponent(contactEmail) + '?subject=' + subject + '&body=' + body;
+    }
+    feedbackBox.classList.remove('visible');
+    thankYou.classList.add('visible');
+  });
+</script>
+
+</body>
+</html>
