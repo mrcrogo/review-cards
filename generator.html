@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Review Card Link Generator</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+  }
+  .card {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+  h1 {
+    font-size: 20px;
+    margin-bottom: 6px;
+    color: #1a1a1a;
+  }
+  p.subtitle {
+    color: #666;
+    margin-bottom: 24px;
+    font-size: 14px;
+  }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 6px;
+    margin-top: 16px;
+  }
+  input {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  button {
+    margin-top: 20px;
+    width: 100%;
+    background: #1a1a1a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #333;
+  }
+  .result {
+    display: none;
+    margin-top: 20px;
+    background: #f0f7f0;
+    border: 1px solid #cde5cd;
+    border-radius: 8px;
+    padding: 14px;
+  }
+  .result.visible {
+    display: block;
+  }
+  .result-label {
+    font-size: 12px;
+    color: #444;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .result-link {
+    font-size: 13px;
+    word-break: break-all;
+    color: #1a1a1a;
+    background: white;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    background: #2d7a2d;
+    padding: 10px;
+    font-size: 13px;
+  }
+  .copy-btn:hover {
+    background: #256525;
+  }
+  .error-msg {
+    color: #c0392b;
+    font-size: 13px;
+    margin-top: 12px;
+    display: none;
+  }
+  .error-msg.visible {
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>Review Card Link Generator</h1>
+  <p class="subtitle">Fill in a business's details to get their custom NFC card link.</p>
+
+  <label for="bizName">Business name</label>
+  <input type="text" id="bizName" placeholder="e.g. Marda Loop Barber Shop">
+
+  <label for="googleLink">Google review link</label>
+  <input type="text" id="googleLink" placeholder="e.g. https://g.page/r/abc123/review">
+
+  <label for="ownerEmail">Owner's email</label>
+  <input type="text" id="ownerEmail" placeholder="e.g. owner@business.com">
+
+  <button id="generateBtn">Generate link</button>
+
+  <div class="error-msg" id="errorMsg">Please fill in all three fields.</div>
+
+  <div class="result" id="result">
+    <div class="result-label">Their custom review card link:</div>
+    <div class="result-link" id="resultLink"></div>
+    <button class="copy-btn" id="copyBtn">Copy link</button>
+  </div>
+</div>
+
+<script>
+  const BASE_URL = "https://mrcrogo.github.io/review-cards/";
+
+  document.getElementById('generateBtn').addEventListener('click', () => {
+    const biz = document.getElementById('bizName').value.trim();
+    const link = document.getElementById('googleLink').value.trim();
+    const email = document.getElementById('ownerEmail').value.trim();
+
+    const errorMsg = document.getElementById('errorMsg');
+    const result = document.getElementById('result');
+
+    if (!biz || !link || !email) {
+      errorMsg.classList.add('visible');
+      result.classList.remove('visible');
+      return;
+    }
+
+    errorMsg.classList.remove('visible');
+
+    const finalUrl = BASE_URL +
+      "?biz=" + encodeURIComponent(biz) +
+      "&link=" + encodeURIComponent(link) +
+      "&email=" + encodeURIComponent(email);
+
+    document.getElementById('resultLink').textContent = finalUrl;
+    result.classList.add('visible');
+  });
+
+  document.getElementById('copyBtn').addEventListener('click', () => {
+    const text = document.getElementById('resultLink').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copyBtn');
+      const originalText = btn.textContent;
+      btn.textContent = "Copied!";
+      setTimeout(() => { btn.textContent = originalText; }, 1500);
+    });
+  });
+</script>
+
+</body>
+</html>
