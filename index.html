@@ -93,4 +93,176 @@
   }
   .feedback-box p {
     font-size: 14px;
-    color:
+    color: #666;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  textarea {
+    width: 100%;
+    border: 1.5px solid #eee;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 14px;
+    min-height: 100px;
+    font-family: inherit;
+    resize: vertical;
+    background: #fafafa;
+    transition: border-color 0.15s ease;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: white;
+  }
+  button {
+    margin-top: 14px;
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 15px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.15s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  }
+  button:active {
+    transform: translateY(0);
+  }
+  .thank-you {
+    display: none;
+    margin-top: 20px;
+    color: #444;
+    font-size: 15px;
+    line-height: 1.5;
+    animation: fadeIn 0.3s ease-out;
+  }
+  .thank-you.visible {
+    display: block;
+  }
+  .thank-you .check {
+    font-size: 36px;
+    display: block;
+    margin-bottom: 10px;
+  }
+  .error {
+    color: #c0392b;
+    font-size: 14px;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="card" id="card">
+  <div class="icon-badge" id="iconBadge">STAR</div>
+  <h1 id="bizName">How was your experience?</h1>
+  <p class="subtitle">Tap a star to let us know</p>
+
+  <div class="stars" id="stars">
+    <span class="star" data-value="1">&#9733;</span>
+    <span class="star" data-value="2">&#9733;</span>
+    <span class="star" data-value="3">&#9733;</span>
+    <span class="star" data-value="4">&#9733;</span>
+    <span class="star" data-value="5">&#9733;</span>
+  </div>
+
+  <div class="feedback-box" id="feedbackBox">
+    <p>We are sorry to hear that. Please tell us what went wrong so we can make it right:</p>
+    <textarea id="feedbackText" placeholder="Your feedback..."></textarea>
+    <button id="submitFeedback">Send feedback</button>
+  </div>
+
+  <div class="thank-you" id="thankYou">
+    Thank you, your feedback has been sent directly to the business.
+  </div>
+</div>
+
+<script>
+  var params = new URLSearchParams(window.location.search);
+  var bizNameParam = params.get('biz') || 'us';
+  var googleLink = params.get('link');
+  var contactEmail = params.get('email');
+  var customColor = params.get('color');
+  var logoUrl = params.get('logo');
+
+  if (logoUrl) {
+    var iconBadge = document.getElementById('iconBadge');
+    iconBadge.innerHTML = '<img src="' + decodeURIComponent(logoUrl) + '" alt="Logo">';
+  }
+
+  if (customColor) {
+    var safeColor = '#' + customColor.replace(/[^0-9a-fA-F]/g, '').slice(0, 6);
+    if (safeColor.length === 7) {
+      document.documentElement.style.setProperty('--accent', safeColor);
+      document.documentElement.style.setProperty('--accent-dark', safeColor);
+    }
+  }
+
+  document.getElementById('bizName').textContent = 'How was your experience at ' + decodeURIComponent(bizNameParam) + '?';
+
+  var stars = document.querySelectorAll('.star');
+  var feedbackBox = document.getElementById('feedbackBox');
+  var thankYou = document.getElementById('thankYou');
+  var starsContainer = document.getElementById('stars');
+
+  stars.forEach(function(star) {
+    star.addEventListener('mouseenter', function() {
+      var val = star.getAttribute('data-value');
+      highlightStars(val);
+    });
+    star.addEventListener('click', function() {
+      var val = parseInt(star.getAttribute('data-value'));
+      handleRating(val);
+    });
+  });
+
+  function highlightStars(upTo) {
+    stars.forEach(function(s) {
+      if (parseInt(s.getAttribute('data-value')) <= upTo) {
+        s.classList.add('hovered');
+      } else {
+        s.classList.remove('hovered');
+      }
+    });
+  }
+
+  function handleRating(val) {
+    if (val >= 4) {
+      if (googleLink) {
+        window.location.href = decodeURIComponent(googleLink);
+      } else {
+        document.getElementById('card').innerHTML = '<p class="error">No review link was set up for this business. Please contact the owner.</p>';
+      }
+    } else {
+      starsContainer.style.display = 'none';
+      document.querySelector('.subtitle').style.display = 'none';
+      document.querySelector('.icon-badge').style.display = 'none';
+      feedbackBox.classList.add('visible');
+    }
+  }
+
+  document.getElementById('submitFeedback').addEventListener('click', function() {
+    var text = document.getElementById('feedbackText').value.trim();
+    if (!text) {
+      alert('Please enter some feedback before sending.');
+      return;
+    }
+    if (contactEmail) {
+      var subject = encodeURIComponent('Customer feedback for ' + decodeURIComponent(bizNameParam));
+      var body = encodeURIComponent(text);
+      window.location.href = 'mailto:' + decodeURIComponent(contactEmail) + '?subject=' + subject + '&body=' + body;
+    }
+    feedbackBox.classList.remove('visible');
+    thankYou.classList.add('visible');
+  });
+</script>
+
+</body>
+</html>
