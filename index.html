@@ -174,6 +174,37 @@
     display: block;
     margin-bottom: 10px;
   }
+  button.secondary {
+    background: white;
+    color: var(--accent-dark);
+    border: 1.5px solid var(--accent);
+    box-shadow: none;
+    margin-top: 0;
+  }
+  button.secondary:hover {
+    background: color-mix(in srgb, var(--accent) 8%, white);
+    box-shadow: none;
+  }
+  .call-row {
+    margin-bottom: 14px;
+  }
+  .middle-box {
+    display: none;
+    margin-top: 24px;
+    animation: fadeIn 0.3s ease-out;
+  }
+  .middle-box.visible {
+    display: block;
+  }
+  .middle-box p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .middle-box button {
+    margin-top: 10px;
+  }
   .error {
     color: #c0392b;
     font-size: 14px;
@@ -196,15 +227,24 @@
     <span class="star" data-value="5">&#9733;</span>
   </div>
 
+  <div class="middle-box" id="middleBox">
+    <p>Glad it was a good visit! Would you like to share it publicly, or tell us privately how we could improve?</p>
+    <button id="middleGoogleBtn">Leave a Google review</button>
+    <button class="secondary" id="middleFeedbackBtn">Send private feedback instead</button>
+  </div>
+
   <div class="feedback-box" id="feedbackBox">
     <p>We're sorry to hear that. Please tell us what went wrong so we can make it right:</p>
+    <div class="call-row" id="callRow" style="display:none;">
+      <a href="#" id="callBtn" class="button-link"><button class="secondary" type="button">📞 Call us now</button></a>
+    </div>
     <textarea id="feedbackText" placeholder="Your feedback..."></textarea>
     <button id="submitFeedback">Send feedback</button>
   </div>
 
   <div class="thank-you" id="thankYou">
     <span class="check">💌</span>
-    Thank you, your feedback has been sent directly to the business.
+    Thanks for letting us know, someone will follow up with you soon.
   </div>
 </div>
 
@@ -215,6 +255,7 @@
   const contactEmail = params.get('email');
   const customColor = params.get('color');
   const logoUrl = params.get('logo');
+  const phoneNumber = params.get('phone');
 
   if (logoUrl) {
     const iconBadge = document.getElementById('iconBadge');
@@ -258,6 +299,35 @@
     });
   }
 
+  const middleBox = document.getElementById('middleBox');
+  const callRow = document.getElementById('callRow');
+  const callBtn = document.getElementById('callBtn');
+
+  if (phoneNumber) {
+    callBtn.href = 'tel:' + decodeURIComponent(phoneNumber);
+  }
+
+  function hideIntro() {
+    starsContainer.style.display = 'none';
+    document.querySelector('.subtitle').style.display = 'none';
+    document.querySelector('.icon-badge').style.display = 'none';
+  }
+
+  function goToGoogle() {
+    if (googleLink) {
+      window.location.href = decodeURIComponent(googleLink);
+    } else {
+      document.getElementById('card').innerHTML = '<p class="error">No review link was set up for this business. Please contact the owner.</p>';
+    }
+  }
+
+  function showFeedbackBox() {
+    if (phoneNumber) {
+      callRow.style.display = 'block';
+    }
+    feedbackBox.classList.add('visible');
+  }
+
   function handleRating(val) {
     stars.forEach(s => {
       if (parseInt(s.getAttribute('data-value')) <= val) {
@@ -266,22 +336,28 @@
     });
 
     if (val >= 4) {
-      if (googleLink) {
-        setTimeout(() => {
-          window.location.href = decodeURIComponent(googleLink);
-        }, 450);
-      } else {
-        document.getElementById('card').innerHTML = '<p class="error">No review link was set up for this business. Please contact the owner.</p>';
-      }
+      setTimeout(goToGoogle, 450);
+    } else if (val === 3) {
+      setTimeout(() => {
+        hideIntro();
+        middleBox.classList.add('visible');
+      }, 300);
     } else {
       setTimeout(() => {
-        starsContainer.style.display = 'none';
-        document.querySelector('.subtitle').style.display = 'none';
-        document.querySelector('.icon-badge').style.display = 'none';
-        feedbackBox.classList.add('visible');
+        hideIntro();
+        showFeedbackBox();
       }, 300);
     }
   }
+
+  document.getElementById('middleGoogleBtn').addEventListener('click', () => {
+    goToGoogle();
+  });
+
+  document.getElementById('middleFeedbackBtn').addEventListener('click', () => {
+    middleBox.classList.remove('visible');
+    showFeedbackBox();
+  });
 
   document.getElementById('submitFeedback').addEventListener('click', () => {
     const text = document.getElementById('feedbackText').value.trim();
